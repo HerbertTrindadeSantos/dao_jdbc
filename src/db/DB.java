@@ -1,6 +1,6 @@
 package db;
 
-import Excepcions.DbException;
+import db.Excepcions.DbException;
 
 import java.io.FileInputStream;
 import java.io.IOException;

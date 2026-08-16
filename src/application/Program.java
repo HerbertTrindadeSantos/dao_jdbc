@@ -1,14 +1,17 @@
 package application;
 
-import db.DB;
+import model.entities.Department;
+import model.entities.Seller;
 
-import java.sql.Connection;
+import java.time.LocalDate;
 
 public class Program {
     public static void main(String[] args) {
-        
-        Connection conn = null;
-        DB.getConnection();
-        DB.closeConnection();
+
+        Department dp = new Department(1,"Books");
+
+        Seller seller = new Seller(21,"Feliepete","felipete@gmail.com", LocalDate.parse("1999-09-12"),1500.00,dp);
+        System.out.println(dp);
+        System.out.println(seller);
     }
 }
