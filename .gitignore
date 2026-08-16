@@ -1,0 +1,24 @@
+
+# --- Compilação do Java (Arquivos gerados) ---
+*.class
+*.jar
+*.war
+*.ear
+bin/
+target/
+out/
+
+# --- IDE (IntelliJ IDEA) ---
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# --- Arquivos do Sistema Operacional ---
+.DS_Store
+Thumbs.db
+
+# --- Logs e Arquivos Temporários ---
+*.log
+*.tmp
+*.swp
