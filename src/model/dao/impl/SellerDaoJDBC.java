@@ -24,35 +24,82 @@ public class SellerDaoJDBC implements SellerDao {
     public void insert(Seller obj) {
         PreparedStatement st = null;
 
-        try{
+        try {
             st = conn.prepareStatement("INSERT INTO "
-                    +"seller "
-                    +"(Name,Email,BirthDate,BaseSalary,DepartmentId) "
-                    +"VALUES "
-                    +"(?,?,?,?,?);"
+                    + "seller "
+                    + "(Name,Email,BirthDate,BaseSalary,DepartmentId) "
+                    + "VALUES "
+                    + "(?,?,?,?,?);"
             );
-            st.setString(1,obj.getName());
-            st.setString(2,obj.getEmail());
-            st.setDate(3,Date.valueOf(obj.getBirthDate()));
-            st.setDouble(4,obj.getBaseSalary());
-            st.setInt(5,obj.getDepartment().getId());
-            st.executeUpdate();
-        }catch (SQLException e){
+
+            st = instantiateSellerDb(obj, st);
+            int affectedRows = st.executeUpdate();
+            System.out.println("Rows affected: " + affectedRows);
+
+        } catch (SQLException e) {
             throw new DbException(e.getMessage());
-        }finally {
+        } finally {
+            DB.closeStatement(st);
+        }
+    }
+
+    private PreparedStatement instantiateSellerDb(Seller obj, PreparedStatement st) throws SQLException {
+
+        st.setString(1, obj.getName());
+        st.setString(2, obj.getEmail());
+        st.setDate(3, Date.valueOf(obj.getBirthDate()));
+        st.setDouble(4, obj.getBaseSalary());
+        st.setInt(5, obj.getDepartment().getId());
+
+        return st;
+    }
+
+    @Override
+    public void update(Seller obj, int id) {
+        PreparedStatement st = null;
+
+        try {
+            st = conn.prepareStatement("UPDATE "
+                    + "seller SET "
+                    + "Name = ? "
+                    + "Email = ? "
+                    + "BirthDate = ? "
+                    + "BaseSalary = ? "
+                    + "DepartmentId = ? "
+                    + "WHERE Id = ? ;"
+            );
+
+            st = instantiateSellerDb(obj, st);
+            st.setInt(6, id);
+            int affectedRows = st.executeUpdate();
+            System.out.println("Rows affected: " + affectedRows);
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        } finally {
             DB.closeStatement(st);
         }
     }
 
     @Override
-    public void update(Seller obj) {
-
-    }
-
-    @Override
     public void deleteByld(Integer id) {
+        PreparedStatement st = null;
 
+        try {
+            st = conn.prepareStatement("DELETE "
+                    + "FROM seller "
+                    + "WHERE Id = ?;"
+            );
+            st.setInt(1, id);
+            int affectedRows = st.executeUpdate();
+            System.out.println("Rows affected: " + affectedRows);
+
+
+        } catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
     }
+
 
     private Department isntantiateDepartment(ResultSet rs) throws SQLException {
         Department dep = new Department();
@@ -114,21 +161,24 @@ public class SellerDaoJDBC implements SellerDao {
             rs = st.executeQuery();
 
             List<Seller> sellerList = new ArrayList<>();
-            Map<Integer,Department> departmentMap = new HashMap<>();
+            Map<Integer, Department> departmentMap = new HashMap<>();
 
-            while (rs.next()){
+            while (rs.next()) {
                 Department dep = departmentMap.get(rs.getInt("DepartmentId"));
-                if (dep == null){
+                if (dep == null) {
                     dep = isntantiateDepartment(rs);
-                    departmentMap.put(rs.getInt("DepartmentId"),dep);
+                    departmentMap.put(rs.getInt("DepartmentId"), dep);
                 }
-                Seller sll = instantiateSeller(rs,dep);
+                Seller sll = instantiateSeller(rs, dep);
                 sellerList.add(sll);
             }
             return sellerList;
 
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
+        } finally {
+            DB.closeStatement(st);
+            DB.closeResultSet(rs);
         }
     }
 
