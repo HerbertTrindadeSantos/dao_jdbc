@@ -83,12 +83,12 @@ public class SellerDaoJDBC implements SellerDao {
             st = instantiateSellerDb(obj, st);
             st.setInt(6, id);
             int affectedRows = st.executeUpdate();
+
             if (affectedRows > 0) {
                 System.out.println("Rows affected: " + affectedRows);
             } else {
                 throw new DbException("Unexpected Error.No rows affected");
             }
-
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
         } finally {
@@ -112,8 +112,6 @@ public class SellerDaoJDBC implements SellerDao {
             } else {
                 throw new DbException("Unexpected erro. No rows affected");
             }
-
-
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
         }
