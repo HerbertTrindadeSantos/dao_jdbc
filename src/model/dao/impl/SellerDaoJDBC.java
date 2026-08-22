@@ -26,15 +26,26 @@ public class SellerDaoJDBC implements SellerDao {
 
         try {
             st = conn.prepareStatement("INSERT INTO "
-                    + "seller "
-                    + "(Name,Email,BirthDate,BaseSalary,DepartmentId) "
-                    + "VALUES "
-                    + "(?,?,?,?,?);"
+                            + "seller "
+                            + "(Name,Email,BirthDate,BaseSalary,DepartmentId) "
+                            + "VALUES "
+                            + "(?,?,?,?,?);",
+                    st.RETURN_GENERATED_KEYS
             );
 
             st = instantiateSellerDb(obj, st);
             int affectedRows = st.executeUpdate();
-            System.out.println("Rows affected: " + affectedRows);
+            if (affectedRows > 0) {
+                ResultSet rs = st.getGeneratedKeys();
+                if (rs.next()) {
+                    int id = rs.getInt(1);
+                    obj.setId(id);
+                    DB.closeResultSet(rs);
+                }
+                System.out.println("Rows affected: " + affectedRows);
+            } else {
+                throw new DbException("Unexpected error! No rows affected");
+            }
 
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
@@ -72,7 +83,11 @@ public class SellerDaoJDBC implements SellerDao {
             st = instantiateSellerDb(obj, st);
             st.setInt(6, id);
             int affectedRows = st.executeUpdate();
-            System.out.println("Rows affected: " + affectedRows);
+            if (affectedRows > 0) {
+                System.out.println("Rows affected: " + affectedRows);
+            } else {
+                throw new DbException("Unexpected Error.No rows affected");
+            }
 
         } catch (SQLException e) {
             throw new DbException(e.getMessage());
@@ -92,7 +107,11 @@ public class SellerDaoJDBC implements SellerDao {
             );
             st.setInt(1, id);
             int affectedRows = st.executeUpdate();
-            System.out.println("Rows affected: " + affectedRows);
+            if (affectedRows > 0) {
+                System.out.println("Rows affected: " + affectedRows);
+            } else {
+                throw new DbException("Unexpected erro. No rows affected");
+            }
 
 
         } catch (SQLException e) {
