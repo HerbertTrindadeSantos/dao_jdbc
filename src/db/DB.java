@@ -55,7 +55,7 @@ public class DB {
     }
 
     public static void closeResultSet(ResultSet set){
-        if (conn != set){
+        if (set != null){
             try{
                 set.close();
             } catch (SQLException e){
